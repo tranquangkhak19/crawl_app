@@ -1,5 +1,5 @@
 defmodule Core do
-  def crawl_all(base_url) do
+  def crawl_all(base_url, filename) do
     res = handle_url(base_url)
     case res do
       {:error, error_message} ->
@@ -21,13 +21,13 @@ defmodule Core do
           items: all_items_list
         }
 
-        encode_json(ret)
+        encode_json(ret, filename)
     end
   end
 
-  def encode_json(input, path \\ "E:/TQ_KHA/crawl_phimmoi-master/result2") do
+  def encode_json(input, filename) do
     {_status, result} = JSON.encode(input)
-    File.write("#{path}.json", result)
+    File.write("E:/TQ_KHA/crawlapp/priv/static/assets/#{filename}.json", result)
   end
 
   def handle_url(base_url) do

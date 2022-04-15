@@ -18,7 +18,13 @@ defmodule CrawlappWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
     post "/", CrawlController, :post
+
+    get "/upfile", CrawlController, :index
+    post "/upfile", CrawlController, :postfile
+
+    get "/download", CrawlController, :download
   end
 
   # Other scopes may use custom stacks.

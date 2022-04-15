@@ -1,0 +1,7 @@
+<%= form_for @non, Routes.crawl_path(@conn, :postfile), [multipart: true],  fn f -> %>
+  <div class="form-group">
+    <label>Input file</label>
+    <%= file_input f, :inputfile, class: "form-control" %>
+  </div>
+  <%= submit "Submit", class: "btn btn-primary" %>
+<% end %>
