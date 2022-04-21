@@ -3,6 +3,7 @@ defmodule CrawlappWeb.CrawlController do
   alias Core
   alias Crawlapp.Repo
   alias Crawlapp.Film
+  import Ecto.Query
 
 
   def index(conn, _params) do
@@ -15,13 +16,20 @@ defmodule CrawlappWeb.CrawlController do
     data = Core.crawl_all(url, "result1")
     post_data_to_database(data)
 
-    render_film_list(conn)
+    render_film_list()
   end
 
-  defp render_film_list(conn) do
-    films = Repo.all(Film)
-    render conn, "download.html", films: films
+  def render_film_list() do
+    offset = 5
+
+    query = from(c in Film, select: c, limit: 5, offset: ^offset)
+    Repo.all(query)
+    Repo.aggregate(Film, :count, :id)
+
+    # films = Repo.all()
+    # render conn, "download.html", films: films
   end
+
 
   defp post_data_to_database(data) do
     IO.inspect(data)
