@@ -1,1 +1,13 @@
 <%= link raw('<span>Download</span>'), to: Routes.crawl_path(@conn, :download), class: "nav-link" %>
+
+<h4>Films</h4>
+
+<ul class="collection">
+    <%= for film <- @films do %>
+        <li class="collectio-item">
+            <%= film.title %>
+        </li>
+    <% end %>
+</ul>
+
+

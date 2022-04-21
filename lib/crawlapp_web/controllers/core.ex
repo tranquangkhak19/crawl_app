@@ -22,12 +22,15 @@ defmodule Core do
         }
 
         encode_json(ret, filename)
+
+        all_items_list
     end
   end
 
   def encode_json(input, filename) do
     {_status, result} = JSON.encode(input)
-    File.write("E:/TQ_KHA/crawlapp/priv/static/assets/#{filename}.json", result)
+    path = "E:/TQ_KHA/crawlapp/priv/static/assets/" <> filename <> ".json"
+    File.write(path, result)
   end
 
   def handle_url(base_url) do
@@ -93,6 +96,9 @@ defmodule Core do
       #link
       link = Floki.text(Floki.attribute(element, "href"))
 
+      #author and nation
+      author_and_nation = get_author_nation(link)
+
       #episode
       ribbon = Floki.text(Floki.find(element, "span.ribbon"))
       [curr_ep, full_ep] = ribbon_to_episode(ribbon)
@@ -122,6 +128,17 @@ defmodule Core do
         year: 2022
       }
     end)
+  end
+
+  def get_author_nation(link) do
+    html = HTTPoison.get!(link).body
+    {:ok, doc} = Floki.parse_document(html)
+    elements =
+    doc
+    |> Floki.find("dt.movie-dt")
+    # |> Enum.map(fn x -> Floki.text(x) end)
+    # |> Enum.map(fn x -> Integer.to_string(String.length(x) end)
+
   end
 
 
