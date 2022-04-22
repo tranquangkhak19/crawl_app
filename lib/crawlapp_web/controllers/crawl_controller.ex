@@ -6,6 +6,7 @@ defmodule CrawlappWeb.CrawlController do
   import Ecto.Query
 
 
+  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
   def index(conn, _params) do
     render conn, "index.html", non: conn
   end
@@ -16,18 +17,24 @@ defmodule CrawlappWeb.CrawlController do
     data = Core.crawl_all(url, "result1")
     post_data_to_database(data)
 
-    render_film_list()
+    render_film_list(conn, 1)
   end
 
-  def render_film_list() do
-    offset = 5
+  defp render_film_list(conn, page \\ 2) do
+    num_of_film = Repo.aggregate(Film, :count, :id)
+    chunk = 8
+    num_of_page =  ceil(num_of_film/chunk)
+    # page = 1
+    offset = chunk*(page-1)
 
-    query = from(c in Film, select: c, limit: 5, offset: ^offset)
-    Repo.all(query)
-    Repo.aggregate(Film, :count, :id)
+    query = from(c in Film, select: c, limit: ^chunk, offset: ^offset)
+    films = Repo.all(query)
+    render conn, "download.html", params: %{films: films, page: page, num_of_page: num_of_page}
+  end
 
-    # films = Repo.all()
-    # render conn, "download.html", films: films
+  def get_films_by_page(conn, %{"id" => page}) do
+    IO.inspect(page, label: "NGUNGOCQUA")
+    render_film_list(conn, String.to_integer(page))
   end
 
 

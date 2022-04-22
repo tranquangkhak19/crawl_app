@@ -25,6 +25,8 @@ defmodule CrawlappWeb.Router do
     post "/upfile", CrawlController, :postfile
 
     get "/download", CrawlController, :download
+
+    get "/page/:id", CrawlController, :get_films_by_page
   end
 
   # Other scopes may use custom stacks.

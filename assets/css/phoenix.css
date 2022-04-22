@@ -87,6 +87,70 @@ header nav a {
   display: block;
 }
 
+.blue-color {
+  color: blue;
+}
+
+.index-nav {
+  list-style-type: none;
+}
+
+.index-nav li {
+  display: inline;
+}
+
+.btn {
+  display: inline-block;
+  width: auto;
+  background-color: #f1f1f1;
+  padding: 8px;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: #d1d1d1;
+}
+
+.active {
+  border: 2px solid black;
+}
+
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #f1f1f1;
+  justify-content: center;
+}
+
+.flex-container > div {
+  background-color: #f1f1f1;
+  width: 21%;
+  margin: 10px;
+  text-align: center;
+}
+
+
+
+.thumbnail {
+  position: absolute;
+  z-index: 1;
+}
+
+.thumbnail:hover {
+  z-index: -1;
+}
+
+.item {
+  position: relative;
+}
+
+.info {
+  position: absolute;
+  top: 50px;
+}
+
+
+
 @media (min-width: 40.0rem) { /* Small devices (landscape phones, 576px and up) */
   header section {
     flex-direction: row;

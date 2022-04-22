@@ -1,12 +1,49 @@
-<%= link raw('<span>Download</span>'), to: Routes.crawl_path(@conn, :download), class: "nav-link" %>
+<div class="btn">
+    <%= link raw('<span>Download</span>'), to: Routes.crawl_path(@conn, :download), class: "nav-link" %>
+</div>  
 
-<h4>Films</h4>
-
-<ul class="collection">
-<%= num_page = ceil(Enum.count(@films)/20) %>
-    <%= for film <- Enum.chunk_every(@films, 20) |> Enum.at(0) do %>
-        <li class="collectio-item">
-            <%= film.title %>
+<ul class="index-nav">
+    <li>
+        <a href={"/page/" <> Integer.to_string(if @params.page-1 >= 1, do: @params.page-1, else: @params.num_of_page)}>
+            <div class="btn">Prev</div>
+        </a>
+    </li>
+    <%= 
+    half = 2
+    start_index = if @params.page-half <= 1, do: 1, else: @params.page-half
+    end_index = if @params.page+half >= @params.num_of_page, do: @params.num_of_page, else: @params.page+half
+    start_loop = if end_index - @params.page < 2, do: end_index - 4, else: start_index
+    end_loop = if @params.page - start_index < 2, do: start_index + 4, else: end_index
+    for i <- (start_loop)..(end_loop) do %>
+        <li>
+            <a href={"/page/" <> Integer.to_string(i)}>
+                <div class={"btn" <> if i==@params.page, do: " active", else: ""}><%= i %></div>
+            </a>
         </li>
     <% end %>
+    <li>
+        <a href={"/page/" <> Integer.to_string(if @params.page+1 <=  @params.num_of_page, do: @params.page+1, else: 1)}>
+            <div class="btn">Next</div>
+        </a>
+    </li>
+    <li>
+        <a href={"/page/" <> Integer.to_string(@params.num_of_page)}>
+            <div class="btn">Last</div>
+        </a>
+    </li>
 </ul>
+
+<div class="flex-container">
+    <%= for film <- @params.films do %>
+        <div class="item">
+            <div class="info">
+                Tên phim
+            </div>
+            <div class="thumbnail">
+                <img src={String.slice(film.thumnail, 22..-3)} width="200px" height="300px">
+                <%= film.title %>
+            </div>     
+        </div>
+    <% end %>
+</div>
+
