@@ -122,31 +122,43 @@ header nav a {
   justify-content: center;
 }
 
-.flex-container > div {
+.flex-container .item {
   background-color: #f1f1f1;
   width: 21%;
   margin: 10px;
   text-align: center;
+  height: 350px;
+  display: block;
 }
 
-
+.item-top {
+  display: block;
+  position: relative;
+  height: max-content;
+}
 
 .thumbnail {
+  display: block;
   position: absolute;
-  z-index: 1;
+  z-index: 0;
 }
 
 .thumbnail:hover {
+  position: absolute;
   z-index: -1;
 }
 
-.item {
-  position: relative;
+.info {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  
 }
 
-.info {
-  position: absolute;
-  top: 50px;
+.title {
+  display: block;
+  position: relative;
 }
 
 

@@ -36,13 +36,18 @@
 <div class="flex-container">
     <%= for film <- @params.films do %>
         <div class="item">
-            <div class="info">
-                Tên phim
+            <div class="item-top">
+                <div class="info">
+                    Tên phim
+                </div>
+                
+                <div class="thumbnail">
+                    <img src={String.slice(film.thumnail, 22..-3)}  width="200px" height="300px">
+                </div>
+                
             </div>
-            <div class="thumbnail">
-                <img src={String.slice(film.thumnail, 22..-3)} width="200px" height="300px">
-                <%= film.title %>
-            </div>     
+            
+            <div class="title"><%= film.title %></div>
         </div>
     <% end %>
 </div>
