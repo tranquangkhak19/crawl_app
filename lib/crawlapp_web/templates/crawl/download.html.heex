@@ -1,11 +1,38 @@
-<div class="btn">
-    <%= link raw('<span>Download</span>'), to: Routes.crawl_path(@conn, :download), class: "nav-link" %>
-</div>  
+<div class="row">
+
+    <div class="col-2 dropdown">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            Directory
+        </a>
+
+        <ul class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href={"/director/all"}>All</a></li>
+            <%= for director <- @params.directors do %>
+                <li><a class="dropdown-item" href={"/director/" <> director}><%= director %></a></li>
+            <% end %>
+            
+        </ul>
+    </div>
+
+    <div class="col-2 dropdown">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            National
+        </a>
+
+        <ul class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href={"/national/all"}>All</a></li>
+            <%= for national <- @params.nationals do %>
+                <li><a class="dropdown-item" href={"/national/" <> national}><%= national %></a></li>
+            <% end %>
+            
+        </ul>
+    </div>
+</div>
 
 <ul class="index-nav">
     <li>
         <a href={"/page/" <> Integer.to_string(if @params.page-1 >= 1, do: @params.page-1, else: @params.num_of_page)}>
-            <div class="btn">Prev</div>
+            <div class="btn btn-info">Prev</div>
         </a>
     </li>
     <%= 
@@ -17,18 +44,18 @@
     for i <- (start_loop)..(end_loop) do %>
         <li>
             <a href={"/page/" <> Integer.to_string(i)}>
-                <div class={"btn" <> if i==@params.page, do: " active", else: ""}><%= i %></div>
+                <div class={"btn btn-info" <> if i==@params.page, do: " active", else: ""}><%= i %></div>
             </a>
         </li>
     <% end %>
     <li>
         <a href={"/page/" <> Integer.to_string(if @params.page+1 <=  @params.num_of_page, do: @params.page+1, else: 1)}>
-            <div class="btn">Next</div>
+            <div class="btn btn-info">Next</div>
         </a>
     </li>
     <li>
         <a href={"/page/" <> Integer.to_string(@params.num_of_page)}>
-            <div class="btn">Last</div>
+            <div class="btn btn-info">Last</div>
         </a>
     </li>
 </ul>
@@ -52,3 +79,7 @@
     <% end %>
 </div>
 
+
+<div class="btn btn-info">
+    <%= link raw('<span>Download</span>'), to: Routes.crawl_path(@conn, :download), class: "nav-link" %>
+</div>  

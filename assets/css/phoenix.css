@@ -99,7 +99,7 @@ header nav a {
   display: inline;
 }
 
-.btn {
+/* .btn {
   display: inline-block;
   width: auto;
   background-color: #f1f1f1;
@@ -109,7 +109,7 @@ header nav a {
 
 .btn:hover {
   background-color: #d1d1d1;
-}
+} */
 
 .active {
   border: 2px solid black;
@@ -161,6 +161,11 @@ header nav a {
   position: relative;
 }
 
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+}
 
 
 @media (min-width: 40.0rem) { /* Small devices (landscape phones, 576px and up) */
