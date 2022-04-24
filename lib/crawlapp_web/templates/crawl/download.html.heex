@@ -1,7 +1,7 @@
 <div class="row">
-
-    <div class="col-2 dropdown">
-        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="col-10"></div>
+    <div class="col-1 dropdown">
+        <a class="btn btn-secondary dropdown-toggle float-right" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
             Directory
         </a>
 
@@ -14,8 +14,8 @@
         </ul>
     </div>
 
-    <div class="col-2 dropdown">
-        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="col-1 dropdown">
+        <a class="btn btn-secondary dropdown-toggle float-right" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
             National
         </a>
 
@@ -29,7 +29,9 @@
     </div>
 </div>
 
-<ul class="index-nav">
+
+
+<ul class="index-nav my-3">
     <li>
         <a href={"/page/" <> Integer.to_string(if @params.page-1 >= 1, do: @params.page-1, else: @params.num_of_page)}>
             <div class="btn btn-info">Prev</div>
@@ -39,8 +41,16 @@
     half = 2
     start_index = if @params.page-half <= 1, do: 1, else: @params.page-half
     end_index = if @params.page+half >= @params.num_of_page, do: @params.num_of_page, else: @params.page+half
-    start_loop = if end_index - @params.page < 2, do: end_index - 4, else: start_index
-    end_loop = if @params.page - start_index < 2, do: start_index + 4, else: end_index
+
+    [start_loop, end_loop] =
+    if @params.num_of_page <= 5 do
+        [1, @params.num_of_page]
+    else
+        start_loop = if end_index - @params.page < 2, do: end_index - 4, else: start_index
+        end_loop = if @params.page - start_index < 2, do: start_index + 4, else: end_index
+        [start_loop, end_loop]
+    end
+        
     for i <- (start_loop)..(end_loop) do %>
         <li>
             <a href={"/page/" <> Integer.to_string(i)}>
@@ -65,21 +75,23 @@
         <div class="item">
             <div class="item-top">
                 <div class="info">
-                    Tên phim
+                    <%= film.director %>
+                    <br>
+                    <%= film.national %>
+                    <br>
+                    Episode: <%= film.episode_number %>
                 </div>
                 
-                <div class="thumbnail">
-                    <img src={String.slice(film.thumnail, 22..-3)}  width="200px" height="300px">
-                </div>
+                <img src={String.slice(film.thumnail, 22..-3)} class="thumbnail" width="200px" height="300px">
                 
             </div>
             
-            <div class="title"><%= film.title %></div>
+            <div class="title my-3"><%= film.title %></div>
         </div>
     <% end %>
 </div>
 
 
-<div class="btn btn-info">
+<div class="btn btn-info float-right my-3 font-weight-bold">
     <%= link raw('<span>Download</span>'), to: Routes.crawl_path(@conn, :download), class: "nav-link" %>
 </div>  

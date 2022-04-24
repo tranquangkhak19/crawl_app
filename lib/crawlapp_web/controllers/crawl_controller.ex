@@ -22,7 +22,7 @@ defmodule CrawlappWeb.CrawlController do
 
   defp render_film_list(conn, page) do
     num_of_film = Repo.aggregate(Film, :count, :id)
-    chunk = 8
+    chunk = 30
     num_of_page =  ceil(num_of_film/chunk)
     # page = 1
     offset = chunk*(page-1)

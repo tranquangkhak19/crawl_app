@@ -29,7 +29,7 @@ defmodule Core do
 
   def encode_json(input, filename) do
     {_status, result} = JSON.encode(input)
-    path = "E:/TQ_KHA/crawlapp/priv/static/assets/" <> filename <> ".json"
+    path = "C:/Users/tqk19/OneDrive/Works/crawl_app/_build/dev/lib/crawlapp/priv/static/assets" <> filename <> ".json"
     File.write(path, result)
   end
 
