@@ -9,10 +9,12 @@ defmodule Crawlapp.Film do
     field :episode_number, :integer
     field :thumnail, :string
     field :year, :integer
+    field :director, :string
+    field :national, :string
   end
 
 
-  def changeset(struct, params \\ %{}) do
+  def changeset(struct, _params \\ %{}) do
     struct
     |> validate_required([:title])
   end

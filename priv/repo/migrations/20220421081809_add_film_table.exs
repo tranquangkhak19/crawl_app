@@ -9,6 +9,7 @@ defmodule Crawlapp.Repo.Migrations.AddFilmTable do
       add :episode_number, :integer
       add :thumnail, :string
       add :year, :integer
+
     end
   end
 end

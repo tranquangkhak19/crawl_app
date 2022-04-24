@@ -96,8 +96,12 @@ defmodule Core do
       #link
       link = Floki.text(Floki.attribute(element, "href"))
 
-      #author and nation
-      author_and_nation = get_author_nation(link)
+      #director and national
+      director_national = get_director_national(link)
+      director = director_national.director
+
+      national = director_national.national
+
 
       #episode
       ribbon = Floki.text(Floki.find(element, "span.ribbon"))
@@ -125,20 +129,34 @@ defmodule Core do
         full_series: curr_ep == full_ep,
         number_of_episode: String.to_integer(curr_ep),
         thumbnail: thumbnail_url,
-        year: 2022
+        year: 2022,
+        director: director,
+        national: national
       }
     end)
   end
 
-  def get_author_nation(link) do
+  def get_director_national(link) do
     html = HTTPoison.get!(link).body
     {:ok, doc} = Floki.parse_document(html)
     elements =
     doc
-    |> Floki.find("dt.movie-dt")
-    # |> Enum.map(fn x -> Floki.text(x) end)
-    # |> Enum.map(fn x -> Integer.to_string(String.length(x) end)
+    |> Floki.find("dl.movie-dl")
+    |> Enum.at(0) |> Tuple.to_list() |> Enum.at(-1)
+    |> Enum.filter(fn {tag, _one, _twq} -> tag=="dt" or tag =="dd" end)
+    |> Enum.chunk_every(2)
+    |> Enum.filter(fn [{_dt, _dt_class, [info]}, _dd] -> (String.length(info)==9 and String.contains?(info, "o di")) or (String.length(info)==9 and String.contains?(info, "c gia:")) end)
+    |> Enum.map(fn [dt, dd] -> [(if Floki.text(dt) |> String.contains?("o di"), do: "director", else: "national" ), ( Floki.text(dd) |> String.trim() |> String.trim(",") |> String.trim(":") |> String.trim() )] end)
 
+
+    case elements do
+      [] -> %{director: "unknow", national: "unknow"}
+      [["director", director]] -> %{director: director, national: "unknow"}
+      [["national", national]] -> %{director: "unknow", national: national}
+      [["director", director], ["national", national]] -> %{director: director, national: national}
+      [["national", national], ["director", director]] -> %{director: director, national: national}
+      _ -> %{director: "unknow", national: "unknow"}
+      end
   end
 
 

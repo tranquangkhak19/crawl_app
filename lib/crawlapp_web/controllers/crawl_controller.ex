@@ -41,7 +41,9 @@ defmodule CrawlappWeb.CrawlController do
   defp post_data_to_database(data) do
     IO.inspect(data)
     Repo.delete_all(Film)
-    Enum.each(data, fn x -> Repo.insert(%Film{title: x.title, link: x.link, full_series: x.full_series, episode_number: x.number_of_episode, thumnail: x.thumbnail, year: x.year}) end)
+    Enum.each(data, fn x ->
+      Repo.insert(%Film{title: x.title, link: x.link, full_series: x.full_series, episode_number: x.number_of_episode, thumnail: x.thumbnail, year: x.year, director: x.director, national: x.national})
+    end)
   end
 
   def postfile(conn, %{"inputfile" => inputfile}) do
