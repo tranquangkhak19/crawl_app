@@ -22,7 +22,7 @@ defmodule CrawlappWeb.CrawlController do
 
   defp render_film_list(conn, page) do
     num_of_film = Repo.aggregate(Film, :count, :id)
-    chunk = 30
+    chunk = 20
     num_of_page =  ceil(num_of_film/chunk)
     # page = 1
     offset = chunk*(page-1)
@@ -36,6 +36,7 @@ defmodule CrawlappWeb.CrawlController do
   def get_films_by_page(conn, %{"id" => page}) do
     IO.inspect(page, label: "NGUNGOCQUA")
     render_film_list(conn, String.to_integer(page))
+
   end
 
   def get_films_by_director(conn, %{"director" => director}) do
@@ -64,6 +65,7 @@ defmodule CrawlappWeb.CrawlController do
 
 
   defp post_data_to_database(data) do
+    #use upsert
     IO.inspect(data)
     Repo.delete_all(Film)
     Enum.each(data, fn x ->

@@ -81,9 +81,9 @@
                     <br>
                     Episode: <%= film.episode_number %>
                 </div>
-                
-                <img src={String.slice(film.thumnail, 22..-3)} class="thumbnail" width="200px" height="300px">
-                
+                <a href={film.link}>
+                    <img src={String.slice(film.thumnail, 22..-3)} class="thumbnail" width="200px" height="300px">
+                </a>
             </div>
             
             <div class="title my-3"><%= film.title %></div>

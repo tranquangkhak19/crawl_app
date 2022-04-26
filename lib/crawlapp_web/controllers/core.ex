@@ -29,7 +29,7 @@ defmodule Core do
 
   def encode_json(input, filename) do
     {_status, result} = JSON.encode(input)
-    path = "C:/Users/tqk19/OneDrive/Works/crawl_app/_build/dev/lib/crawlapp/priv/static/assets" <> filename <> ".json"
+    path = "C:/Users/tqk19/OneDrive/Works/crawl_app/_build/dev/lib/crawlapp/priv/static/assets/" <> filename <> ".json"
     File.write(path, result)
   end
 
@@ -76,8 +76,11 @@ defmodule Core do
     |> Floki.find("ul.pagination")
     |> Floki.find("a")
     |> Enum.at(-2)
+
     {_a, _body, [page_number]} = end_page
+
     String.to_integer(page_number)
+    # if String.to_integer(page_number) > 1, do: 1, else: page_number
   end
 
 
@@ -147,7 +150,6 @@ defmodule Core do
     |> Enum.chunk_every(2)
     |> Enum.filter(fn [{_dt, _dt_class, [info]}, _dd] -> (String.length(info)==9 and String.contains?(info, "o di")) or (String.length(info)==9 and String.contains?(info, "c gia:")) end)
     |> Enum.map(fn [dt, dd] -> [(if Floki.text(dt) |> String.contains?("o di"), do: "director", else: "national" ), ( Floki.text(dd) |> String.trim() |> String.trim(",") |> String.trim(":") |> String.trim() )] end)
-
 
     case elements do
       [] -> %{director: "unknow", national: "unknow"}
