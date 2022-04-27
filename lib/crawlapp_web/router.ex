@@ -26,7 +26,7 @@ defmodule CrawlappWeb.Router do
 
     get "/download", CrawlController, :download
 
-    get "/page/:id", CrawlController, :get_films_by_page
+    get "/page/:page", CrawlController, :get_films_by_page
 
     get "/director/:director", CrawlController, :get_films_by_director
     get "/national/:national", CrawlController, :get_films_by_national

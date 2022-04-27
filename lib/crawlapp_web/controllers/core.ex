@@ -1,5 +1,17 @@
 defmodule Core do
-  def crawl_all(base_url, filename) do
+  def crawl_categories(urls) do
+    for url <- urls do
+      category = url
+      |> String.split("/")
+      |> Enum.filter(fn x -> String.length(x)>0 end)
+      |> Enum.at(-1)
+
+      crawl_all(url, category)
+
+    end
+  end
+
+  def crawl_all(base_url, category) do
     res = handle_url(base_url)
     case res do
       {:error, error_message} ->
@@ -16,14 +28,15 @@ defmodule Core do
 
         total = Enum.count(all_items_list)
         ret = %{
+          category: category,
           crawled_at: crawled_at,
           total: total,
           items: all_items_list
         }
 
-        encode_json(ret, filename)
+        encode_json(ret, category)
 
-        all_items_list
+        %{films: all_items_list, category: category}
     end
   end
 

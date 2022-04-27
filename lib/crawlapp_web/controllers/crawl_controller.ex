@@ -12,30 +12,38 @@ defmodule CrawlappWeb.CrawlController do
   end
 
   def post(conn, %{"url" => url}) do
-    IO.puts("###############################")
-    IO.puts(url)
-    data = Core.crawl_all(url, "result1")
+    data = Core.crawl_categories([url])
     post_data_to_database(data)
 
-    render_film_list(conn, 1)
+    # render_film_list(conn, 1)
+    get_films_by_page(conn, %{"page" => 1})
   end
 
-  defp render_film_list(conn, page) do
-    num_of_film = Repo.aggregate(Film, :count, :id)
-    chunk = 20
-    num_of_page =  ceil(num_of_film/chunk)
-    # page = 1
-    offset = chunk*(page-1)
+  # params = %{films: films, page: page, num_of_page: num_of_page, directors: directors, nationals: nationals}
+  defp render_films(conn, params) do
     directors = Repo.all(from f in Film, distinct: true, select: f.director)
     nationals = Repo.all(from f in Film, distinct: true, select: f.national)
 
-    films = Repo.all(from f in Film, select: f, limit: ^chunk, offset: ^offset)
-    render conn, "download.html", params: %{films: films, page: page, num_of_page: num_of_page, directors: directors, nationals: nationals}
+    full_params = Map.merge(params, %{directors: directors, nationals: nationals})
+
+    render conn, "download.html", params: full_params
   end
 
-  def get_films_by_page(conn, %{"id" => page}) do
-    IO.inspect(page, label: "NGUNGOCQUA")
-    render_film_list(conn, String.to_integer(page))
+
+  def get_films_by_page(conn, %{"page" => u_page}) do
+    page = if is_integer(u_page), do: u_page, else: String.to_integer(u_page)
+
+    num_of_film = Repo.aggregate(Film, :count, :id)
+    chunk = 20
+    num_of_page =  ceil(num_of_film/chunk)
+
+    offset = chunk*(page-1)
+
+    films = Repo.all(from f in Film, select: f, limit: ^chunk, offset: ^offset)
+
+    params = %{films: films, page: page, num_of_page: num_of_page}
+
+    render_films(conn, params)
 
   end
 
@@ -44,7 +52,7 @@ defmodule CrawlappWeb.CrawlController do
       redirect(conn, to: "/page/1")
     else
       films = Repo.all(from f in Film, select: f, where: f.director == ^director)
-      render_film_list_filtered(conn, films)
+      render_films(conn, %{films: films, page: 1, num_of_page: 1})
     end
   end
 
@@ -53,24 +61,17 @@ defmodule CrawlappWeb.CrawlController do
       redirect(conn, to: "/page/1")
     else
       films = Repo.all(from f in Film, select: f, where: f.national == ^national)
-      render_film_list_filtered(conn, films)
+      render_films(conn, %{films: films, page: 1, num_of_page: 1})
     end
   end
 
-  def render_film_list_filtered(conn, films) do
-    directors = Repo.all(from f in Film, distinct: true, select: f.director)
-    nationals = Repo.all(from f in Film, distinct: true, select: f.national)
-    render conn, "download.html", params: %{films: films, page: 1, num_of_page: 1, directors: directors, nationals: nationals}
-  end
-
-
   defp post_data_to_database(data) do
-    #use upsert
+    # use upsert
     IO.inspect(data)
-    Repo.delete_all(Film)
-    Enum.each(data, fn x ->
-      Repo.insert(%Film{title: x.title, link: x.link, full_series: x.full_series, episode_number: x.number_of_episode, thumnail: x.thumbnail, year: x.year, director: x.director, national: x.national})
-    end)
+    # Repo.delete_all(Film)
+    # Enum.each(data, fn x ->
+    #   Repo.insert(%Film{title: x.title, link: x.link, full_series: x.full_series, episode_number: x.number_of_episode, thumnail: x.thumbnail, year: x.year, director: x.director, national: x.national})
+    # end)
   end
 
   def postfile(conn, %{"inputfile" => inputfile}) do
@@ -80,14 +81,14 @@ defmodule CrawlappWeb.CrawlController do
     {:ok, content} = File.read(inputfile.path)
     urls = String.split(content, "\r\n")
 
+
+
+
   end
 
   def download(conn, _params) do
     path = Application.app_dir(:crawlapp, "priv/static/assets/result1.json")
     send_download(conn, {:file, path})
   end
-
-
-
 
 end

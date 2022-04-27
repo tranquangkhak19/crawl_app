@@ -11,6 +11,7 @@ defmodule Crawlapp.Film do
     field :year, :integer
     field :director, :string
     field :national, :string
+    field :category, :string
   end
 
 
