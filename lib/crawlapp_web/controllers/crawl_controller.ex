@@ -3,6 +3,7 @@ defmodule CrawlappWeb.CrawlController do
   alias Core
   alias Crawlapp.Repo
   alias Crawlapp.Film
+  alias Crawlapp.Category
   import Ecto.Query
 
 
@@ -12,19 +13,20 @@ defmodule CrawlappWeb.CrawlController do
   end
 
   def post(conn, %{"url" => url}) do
+    # data: [%{films: films, category: catetgory}, %{films: films, category: catetgory}, ...]
     data = Core.crawl_categories([url])
     post_data_to_database(data)
 
-    # render_film_list(conn, 1)
     get_films_by_page(conn, %{"page" => 1})
   end
 
   # params = %{films: films, page: page, num_of_page: num_of_page, directors: directors, nationals: nationals}
   defp render_films(conn, params) do
+    categories = Repo.all(from f in Category, select: f.category)
     directors = Repo.all(from f in Film, distinct: true, select: f.director)
     nationals = Repo.all(from f in Film, distinct: true, select: f.national)
 
-    full_params = Map.merge(params, %{directors: directors, nationals: nationals})
+    full_params = Map.merge(params, %{directors: directors, nationals: nationals, categories: categories})
 
     render conn, "download.html", params: full_params
   end
@@ -65,14 +67,35 @@ defmodule CrawlappWeb.CrawlController do
     end
   end
 
+  # def test_upsert() do
+  #   category_id = Repo.all(from f in Category, select: f.id, where: f.category == "thanthoai")
+  # end
+
   defp post_data_to_database(data) do
     # use upsert
     IO.inspect(data)
-    # Repo.delete_all(Film)
-    # Enum.each(data, fn x ->
-    #   Repo.insert(%Film{title: x.title, link: x.link, full_series: x.full_series, episode_number: x.number_of_episode, thumnail: x.thumbnail, year: x.year, director: x.director, national: x.national})
-    # end)
+    # data: [%{films: films (list), category: catetgory}, %{films: films, category: catetgory}, ...]
+
+    Enum.each(data, fn cate ->
+      Repo.insert!(
+        %Category{category: cate.category},
+        on_conflict: :nothing
+      )
+
+      [category_id] = Repo.all(from f in Category, select: f.id, where: f.category == ^cate.category)
+
+      Enum.each(cate.films, fn film ->
+        Repo.insert(
+          %Film{category: category_id, title: film.title, link: film.link, full_series: film.full_series, episode_number: film.number_of_episode, thumnail: film.thumbnail, year: film.year, director: film.director, national: film.national},
+          on_conflict: :nothing
+        )
+      end)
+    end)
+
+
+
   end
+
 
   def postfile(conn, %{"inputfile" => inputfile}) do
     IO.puts("############")
@@ -81,10 +104,14 @@ defmodule CrawlappWeb.CrawlController do
     {:ok, content} = File.read(inputfile.path)
     urls = String.split(content, "\r\n")
 
+    # overlap with post function
+    data = Core.crawl_categories(urls)
+    post_data_to_database(data)
 
-
-
+    get_films_by_page(conn, %{"page" => 1})
   end
+
+
 
   def download(conn, _params) do
     path = Application.app_dir(:crawlapp, "priv/static/assets/result1.json")

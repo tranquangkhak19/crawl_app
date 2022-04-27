@@ -5,9 +5,9 @@ defmodule Core do
       |> String.split("/")
       |> Enum.filter(fn x -> String.length(x)>0 end)
       |> Enum.at(-1)
+      |> String.replace("-", " ")
 
       crawl_all(url, category)
-
     end
   end
 
@@ -92,8 +92,8 @@ defmodule Core do
 
     {_a, _body, [page_number]} = end_page
 
-    String.to_integer(page_number)
-    # if String.to_integer(page_number) > 1, do: 1, else: page_number
+    #String.to_integer(page_number)
+    if String.to_integer(page_number) > 2, do: 2, else: String.to_integer(page_number)
   end
 
 
