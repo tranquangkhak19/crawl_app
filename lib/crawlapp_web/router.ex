@@ -32,6 +32,15 @@ defmodule CrawlappWeb.Router do
     get "/national/:national", CrawlController, :get_films_by_national
   end
 
+  scope "/category/:category", CrawlappWeb do
+    pipe_through :browser
+    get "/", CrawlController, :get_films_by_category
+
+
+
+
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", CrawlappWeb do
   #   pipe_through :api

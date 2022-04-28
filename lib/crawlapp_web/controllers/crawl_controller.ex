@@ -27,24 +27,20 @@ defmodule CrawlappWeb.CrawlController do
     nationals = Repo.all(from f in Film, distinct: true, select: f.national)
 
     full_params = Map.merge(params, %{directors: directors, nationals: nationals, categories: categories})
-
     render conn, "download.html", params: full_params
   end
 
 
   def get_films_by_page(conn, %{"page" => u_page}) do
     page = if is_integer(u_page), do: u_page, else: String.to_integer(u_page)
-
     num_of_film = Repo.aggregate(Film, :count, :id)
     chunk = 20
     num_of_page =  ceil(num_of_film/chunk)
-
     offset = chunk*(page-1)
 
     films = Repo.all(from f in Film, select: f, limit: ^chunk, offset: ^offset)
-
-    params = %{films: films, page: page, num_of_page: num_of_page}
-
+    filter_by = %{category: false, director: false, national: false}
+    params = %{films: films, page: page, num_of_page: num_of_page, category_id: -1, filter_by: filter_by}
     render_films(conn, params)
 
   end
@@ -54,7 +50,8 @@ defmodule CrawlappWeb.CrawlController do
       redirect(conn, to: "/page/1")
     else
       films = Repo.all(from f in Film, select: f, where: f.director == ^director)
-      render_films(conn, %{films: films, page: 1, num_of_page: 1})
+      filter_by = %{category: false, director: true, national: false}
+      render_films(conn, %{films: films, page: 1, num_of_page: 1, category_id: -1, filter_by: filter_by})
     end
   end
 
@@ -63,7 +60,19 @@ defmodule CrawlappWeb.CrawlController do
       redirect(conn, to: "/page/1")
     else
       films = Repo.all(from f in Film, select: f, where: f.national == ^national)
-      render_films(conn, %{films: films, page: 1, num_of_page: 1})
+      filter_by = %{category: false, director: false, national: true}
+      render_films(conn, %{films: films, page: 1, num_of_page: 1, category_id: -1, filter_by: filter_by})
+    end
+  end
+
+  def get_films_by_category(conn, %{"category" => category}) do
+    if category == "all" do
+      redirect(conn, to: "/page/1")
+    else
+      [category_id] = Repo.all(from c in Category, select: c.id, where: c.category == ^category)
+      films = Repo.all(from f in Film, select: f, where: f.category == ^category_id)
+      filter_by = %{category: false, director: true, national: true}
+      render_films(conn, %{films: films, page: 1, num_of_page: 1, category_id: -1, filter_by: filter_by})
     end
   end
 
@@ -72,10 +81,7 @@ defmodule CrawlappWeb.CrawlController do
   # end
 
   defp post_data_to_database(data) do
-    # use upsert
-    IO.inspect(data)
     # data: [%{films: films (list), category: catetgory}, %{films: films, category: catetgory}, ...]
-
     Enum.each(data, fn cate ->
       Repo.insert!(
         %Category{category: cate.category},

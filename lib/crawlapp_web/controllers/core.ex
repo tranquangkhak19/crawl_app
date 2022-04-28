@@ -1,5 +1,6 @@
 defmodule Core do
   def crawl_categories(urls) do
+    ret =
     for url <- urls do
       category = url
       |> String.split("/")
@@ -9,6 +10,8 @@ defmodule Core do
 
       crawl_all(url, category)
     end
+
+    encode_json(ret, "result1")
   end
 
   def crawl_all(base_url, category) do
@@ -33,8 +36,6 @@ defmodule Core do
           total: total,
           items: all_items_list
         }
-
-        encode_json(ret, category)
 
         %{films: all_items_list, category: category}
     end
