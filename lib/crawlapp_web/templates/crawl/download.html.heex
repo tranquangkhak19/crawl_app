@@ -43,15 +43,11 @@
     </div>
 </div>
 
-<%= 
-    if @params.filter_by.category do 
-        pre_href = "/category" <> 
-    end
-%>
+
 
 <ul class="index-nav my-3">
     <li>
-        <a href={"/page/" <> Integer.to_string(if @params.page-1 >= 1, do: @params.page-1, else: @params.num_of_page)}>
+        <a href={@params.pre_href <> "/page/" <> Integer.to_string(if @params.page-1 >= 1, do: @params.page-1, else: @params.num_of_page)}>
             <div class="btn btn-info">Prev</div>
         </a>
     </li>
@@ -71,22 +67,23 @@
         
     for i <- (start_loop)..(end_loop) do %>
         <li>
-            <a href={"/page/" <> Integer.to_string(i)}>
+            <a href={@params.pre_href <> "/page/" <> Integer.to_string(i)}>
                 <div class={"btn btn-info" <> if i==@params.page, do: " active", else: ""}><%= i %></div>
             </a>
         </li>
     <% end %>
     <li>
-        <a href={"/page/" <> Integer.to_string(if @params.page+1 <=  @params.num_of_page, do: @params.page+1, else: 1)}>
+        <a href={@params.pre_href <> "/page/" <> Integer.to_string(if @params.page+1 <=  @params.num_of_page, do: @params.page+1, else: 1)}>
             <div class="btn btn-info">Next</div>
         </a>
     </li>
     <li>
-        <a href={"/page/" <> Integer.to_string(@params.num_of_page)}>
+        <a href={@params.pre_href <> "/page/" <> Integer.to_string(@params.num_of_page)}>
             <div class="btn btn-info">Last</div>
         </a>
     </li>
 </ul>
+
 
 <div class="flex-container">
     <%= for film <- @params.films do %>

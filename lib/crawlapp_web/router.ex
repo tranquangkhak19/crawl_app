@@ -16,29 +16,30 @@ defmodule CrawlappWeb.Router do
 
   scope "/", CrawlappWeb do
     pipe_through :browser
-
     get "/", PageController, :index
-
     post "/", CrawlController, :post
-
     get "/upfile", CrawlController, :index
     post "/upfile", CrawlController, :postfile
-
     get "/download", CrawlController, :download
-
     get "/page/:page", CrawlController, :get_films_by_page
-
-    get "/director/:director", CrawlController, :get_films_by_director
-    get "/national/:national", CrawlController, :get_films_by_national
   end
 
   scope "/category/:category", CrawlappWeb do
     pipe_through :browser
     get "/", CrawlController, :get_films_by_category
+    get "/page/:page", CrawlController, :get_films_by_category_with_page
+  end
 
+  scope "/director/:director", CrawlappWeb do
+    pipe_through :browser
+    get "/", CrawlController, :get_films_by_director
+    get "/page/:page", CrawlController, :get_films_by_director_with_page
+  end
 
-
-
+  scope "/national/:national", CrawlappWeb do
+    pipe_through :browser
+    get "/", CrawlController, :get_films_by_national
+    get "/page/:page", CrawlController, :get_films_by_national_with_page
   end
 
   # Other scopes may use custom stacks.

@@ -10,8 +10,9 @@ defmodule Core do
 
       crawl_all(url, category)
     end
-
     encode_json(ret, "result1")
+
+    ret
   end
 
   def crawl_all(base_url, category) do
@@ -116,9 +117,7 @@ defmodule Core do
       #director and national
       director_national = get_director_national(link)
       director = director_national.director
-
       national = director_national.national
-
 
       #episode
       ribbon = Floki.text(Floki.find(element, "span.ribbon"))
